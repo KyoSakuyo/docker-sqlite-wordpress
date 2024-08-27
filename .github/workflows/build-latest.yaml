@@ -1,13 +1,15 @@
 name: Release Latest
 
 on:
-  workflow_dispatch:
   push:
+    branches:
+      - main
     tags:
-      - "*.*.*"
+      - '*'
+  pull_request:
+    branches:
+      - main
 
-env:
-  REGISTRY_IMAGE: soulteary/sqlite-wordpress
 
 jobs:
   docker:
@@ -33,6 +35,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6,linux/arm/v5
-          push: true
-          tags: "${{ env.REGISTRY_IMAGE }}:${{  github.ref_name }}"
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.metal.outputs.tags }}
+          labels: ${{ steps.metal.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
