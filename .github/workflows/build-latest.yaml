@@ -17,7 +17,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+        
+      - name: Docker meta
+        id: metal
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+            
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
